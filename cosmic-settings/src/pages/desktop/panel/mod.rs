@@ -95,7 +95,7 @@ pub enum Message {
     Config(Box<CosmicPanelConfig>),
     OutputAdded(String, WlOutput),
     OutputRemoved(WlOutput),
-    Surface(surface::Action),
+    Surface(surface::Action<crate::app::Message>),
 }
 
 /// Tag a panel message with the page it came from. There is one page per panel, so the page

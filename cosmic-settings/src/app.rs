@@ -326,9 +326,7 @@ impl cosmic::Application for SettingsApp {
             .on_context(|id| cosmic::Action::Cosmic(cosmic::app::Action::NavBarContext(id)))
             .context_menu(self.nav_context_menu())
             .window_id_maybe(self.core().main_window_id())
-            .on_surface_action(|action| {
-                cosmic::Action::Cosmic(cosmic::app::Action::Surface(action))
-            })
+            .on_surface_action(|action| cosmic::Action::Surface(action.flatten()))
             .button_height(32)
             .button_padding([
                 spacing.space_s,

@@ -87,7 +87,7 @@ pub enum Message {
         exec: String,
     },
     /// A dropdown's popup surface. Not tied to a page - it goes straight to the shell.
-    Surface(surface::Action),
+    Surface(surface::Action<crate::app::Message>),
 }
 
 impl Message {
