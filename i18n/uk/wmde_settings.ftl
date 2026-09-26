@@ -525,13 +525,18 @@ time-zone = Часовий пояс
     .auto-info = Необхідні служби визначення місцезнаходження та доступ до Інтернету
 time-format = Формат дати та часу
     .twenty-four = 24-годинний формат часу
-    .show-seconds = Показувати секунди
+    .show-seconds = Секунди
+    .show-weekday = День тижня
     .first = Перший день тижня
-    .show-date = Показувати дату на панелі
+    .date = Дата
     .friday = Пʼятниця
     .saturday = Субота
     .sunday = Неділя
     .monday = Понеділок
+
+date-time-applet-settings-title = Віджет дати й часу
+date-time-applet-settings-label = Налаштування віджета дати й часу
+
 time-region = Регіон та мова
 
 ## System
