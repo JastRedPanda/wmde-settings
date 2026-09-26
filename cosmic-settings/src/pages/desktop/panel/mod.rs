@@ -577,6 +577,9 @@ fn create(anchor: PanelAnchor, output: CosmicPanelOuput, look: PanelLook) {
         expand_to_edges: !island,
         padding: u32::from(island) * 4,
         border_radius: if island { 12 } else { 0 },
+        // Spelled out, not left to `default()`: COSMIC 1.9 added the outline, and the
+        // shipped panels have none.
+        border_width: 0.0,
         margin: 0,
         spacing: 0,
         exclusive_zone: true,
