@@ -134,11 +134,10 @@ impl page::Page<crate::pages::Message> for Page {
         &self,
         sections: &mut SlotMap<section::Entity, page::Section<crate::pages::Message>>,
     ) -> Option<page::Content> {
-        Some(vec![
-            sections.insert(vision()),
-            sections.insert(hearing()),
-            sections.insert(mobility()),
-        ])
+        // WMDE: the stack ships no on-screen keyboard, so there is no Mobility section. It
+        // leaves together with `osk::Page` in `sub_pages()`: the section looks that page up
+        // with `.expect()`, so dropping the page alone aborts the process.
+        Some(vec![sections.insert(vision()), sections.insert(hearing())])
     }
 
     fn on_enter(&mut self) -> cosmic::Task<crate::pages::Message> {
@@ -195,7 +194,8 @@ impl page::Page<crate::pages::Message> for Page {
 
 impl page::AutoBind<crate::pages::Message> for Page {
     fn sub_pages(page: Insert<crate::pages::Message>) -> Insert<crate::pages::Message> {
-        page.sub_page::<magnifier::Page>().sub_page::<osk::Page>()
+        // WMDE: no `osk::Page` - see `content()`.
+        page.sub_page::<magnifier::Page>()
     }
 }
 
@@ -336,6 +336,8 @@ pub fn hearing() -> section::Section<crate::pages::Message> {
         })
 }
 
+// WMDE: unused while the on-screen keyboard is cut out; kept so merges stay cheap.
+#[allow(dead_code)]
 pub fn mobility() -> section::Section<crate::pages::Message> {
     crate::slab!(descriptions {
         mobility = fl!("mobility");
