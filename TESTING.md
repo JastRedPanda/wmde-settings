@@ -38,6 +38,7 @@ This document provides a regression testing checklist for WMDE Settings and the 
 ### Displays
 
 - [ ] Plug in a second display. Displays can be rearranged via dragging.
+- [ ] Display mirroring works.
 
 ### Sound
 

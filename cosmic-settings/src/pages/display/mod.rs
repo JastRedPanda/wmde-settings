@@ -116,7 +116,7 @@ pub enum Message {
     PointerEdgeRemap(bool),
     /// WMDE: toggles that remapping while a window move grab is active.
     PointerEdgeRemapWhileDragging(bool),
-    Surface(surface::Action),
+    Surface(surface::Action<crate::app::Message>),
 }
 
 impl From<Message> for app::Message {

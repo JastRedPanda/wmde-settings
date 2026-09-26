@@ -75,6 +75,8 @@ impl SettingsApp {
             PageCommands::AccessibilityMagnifier => {
                 self.pages.page_id::<accessibility::magnifier::Page>()
             }
+            #[cfg(feature = "page-accessibility")]
+            PageCommands::AccessibilityOsk => self.pages.page_id::<accessibility::osk::Page>(),
             #[cfg(feature = "page-about")]
             PageCommands::About => self.pages.page_id::<system::about::Page>(),
             PageCommands::Appearance { command: _ } => {
@@ -180,7 +182,7 @@ pub enum Message {
     SearchSubmit,
     SetTheme(cosmic::theme::Theme),
     SetWindowTitle,
-    Surface(surface::Action),
+    Surface(surface::Action<Message>),
 }
 
 impl cosmic::Application for SettingsApp {
@@ -567,6 +569,12 @@ impl cosmic::Application for SettingsApp {
                 #[cfg(feature = "page-accessibility")]
                 crate::pages::Message::AccessibilityMagnifier(message) => {
                     if let Some(page) = self.pages.page_mut::<accessibility::magnifier::Page>() {
+                        return page.update(self.active_page, message).map(Into::into);
+                    }
+                }
+                #[cfg(feature = "page-accessibility")]
+                crate::pages::Message::AccessibilityOsk(message) => {
+                    if let Some(page) = self.pages.page_mut::<accessibility::osk::Page>() {
                         return page.update(self.active_page, message).map(Into::into);
                     }
                 }
@@ -982,9 +990,7 @@ impl cosmic::Application for SettingsApp {
                 tracing::error!(error, "error occurred");
             }
             Message::Surface(a) => {
-                return cosmic::task::message(cosmic::Action::Cosmic(
-                    cosmic::app::Action::Surface(a),
-                ));
+                return cosmic::task::message(cosmic::Action::Surface(a));
             }
         }
 

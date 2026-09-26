@@ -422,7 +422,7 @@ pub enum Message {
     OutputRemoved(WlOutput),
     PanelConfig(Box<CosmicPanelConfig>),
     ResetPanel,
-    Surface(surface::Action),
+    Surface(surface::Action<crate::app::Message>),
 }
 
 impl PageInner {

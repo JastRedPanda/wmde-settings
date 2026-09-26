@@ -81,8 +81,8 @@ debug = true
 # cosmic-text = { git = "https://github.com/pop-os/cosmic-text//", rev = "b017d7c" }
 
 [patch.'https://github.com/pop-os/cosmic-protocols']
-cosmic-protocols = { git = "https://github.com/pop-os/cosmic-protocols//", rev = "e95d895" }
-cosmic-client-toolkit = { git = "https://github.com/pop-os/cosmic-protocols//", rev = "e95d895" }
+cosmic-protocols = { git = "https://github.com/pop-os/cosmic-protocols//", rev = "c0cff4d" }
+cosmic-client-toolkit = { git = "https://github.com/pop-os/cosmic-protocols//", rev = "c0cff4d" }
 
 # Consume the WMDE forks of the shared settings-daemon config/audio crates so the
 # repointed cross-component ids (fun.wmde.SettingsDaemon, fun.wmde.Settings.Shortcuts,

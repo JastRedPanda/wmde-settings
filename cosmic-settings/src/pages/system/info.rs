@@ -15,16 +15,16 @@ use wmde_hardware::{SysInfo, Value};
 #[must_use]
 #[derive(Clone, Debug, Default)]
 pub struct Info {
-    pub desktop_environment: String,
     pub device_name: String,
-    pub disk_capacity: String,
-    pub graphics: Vec<String>,
     pub hardware_model: String,
     pub memory: String,
+    pub processor: String,
+    pub graphics: Vec<String>,
+    pub disk_capacity: String,
     pub operating_system: String,
     pub os_architecture: String,
     pub kernel_version: String,
-    pub processor: String,
+    pub desktop_environment: String,
     pub windowing_system: String,
     /// WMDE: the board behind the machine name. On a self-built desktop the DMI product
     /// name is OEM junk and gets filtered out, so this is often the only real identifier.

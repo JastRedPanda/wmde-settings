@@ -960,6 +960,8 @@ bluetooth-display-pin = Злучення Bluetooth
     .description = Введіть PIN-код на { $device }, далі натисніть Enter
 bluetooth-display-passkey = Злучення Bluetooth
     .description = Введіть код для створення пари на { $device }, далі натисніть Enter
+rename = Перейменувати
+bluetooth-rename-device = Перейменувати пристрій
 
 ## WMDE: підсторінка «Обладнання» в категорії «Система і обліковки»
 hardware = Обладнання
