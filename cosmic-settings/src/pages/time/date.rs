@@ -211,6 +211,14 @@ impl page::Page<crate::pages::Message> for Page {
 
         None
     }
+
+    // WMDE: the two drawers share one context slot. A flag left set after the drawer is
+    // dismissed wins the `if` above the next time this page opens the other drawer.
+    fn on_context_drawer_close(&mut self) -> Task<crate::pages::Message> {
+        self.timezone_context = false;
+        self.date_time_applet_context = false;
+        Task::none()
+    }
 }
 
 impl Page {
@@ -219,6 +227,7 @@ impl Page {
             Message::TimezoneContext => {
                 self.timezone_search.clear();
                 self.timezone_context = true;
+                self.date_time_applet_context = false;
                 return cosmic::task::message(crate::app::Message::OpenContextDrawer(self.entity));
             }
 
@@ -259,6 +268,7 @@ impl Page {
 
             Message::DateAndTimeContext => {
                 self.date_time_applet_context = true;
+                self.timezone_context = false;
                 return cosmic::task::message(crate::app::Message::OpenContextDrawer(self.entity));
             }
 
