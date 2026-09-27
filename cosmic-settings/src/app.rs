@@ -356,7 +356,9 @@ impl cosmic::Application for SettingsApp {
         Some(Element::from(nav))
     }
 
-    fn header_start(&self) -> Vec<Element<'_, Self::Message>> {
+    // WMDE: the title bar holds only the title and the window buttons, so search lives on the
+    // strip under it, after the nav bar toggle.
+    fn header_strip(&self) -> Vec<Element<'_, Self::Message>> {
         let mut widgets = Vec::new();
 
         widgets.push(if self.search_active {
@@ -368,8 +370,9 @@ impl cosmic::Application for SettingsApp {
                 .on_submit(|_| Message::SearchSubmit)
                 .into()
         } else {
-            // WMDE: the only control in the header, and it carries no label of its own -
-            // while the search field is collapsed the icon is all the user gets.
+            // WMDE: the only control on the strip besides the nav toggle, and it carries no
+            // label of its own - while the search field is collapsed the icon is all the user
+            // gets.
             cosmic::widget::tooltip(
                 icon::from_name("system-search-symbolic")
                     .apply(button::icon)

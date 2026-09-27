@@ -21,8 +21,6 @@ pub enum Message {
     SetFocusFollowsCursorDelay(String),
     SetCursorFollowsFocus(bool),
     ShowActiveWindowHint(bool),
-    ShowMaximizeButton(bool),
-    ShowMinimizeButton(bool),
     SetEdgeSnapThreshold(u32),
     Surface(surface::Action<crate::app::Message>),
 }
@@ -161,22 +159,6 @@ impl Page {
                     error!(?err, "Failed to set config 'cursor_follows_focus'");
                 }
             }
-            Message::ShowMaximizeButton(value) => {
-                if let Ok(config) = cosmic::config::CosmicTk::config() {
-                    let _res = cosmic::config::COSMIC_TK
-                        .write()
-                        .unwrap()
-                        .set_show_maximize(&config, value);
-                }
-            }
-            Message::ShowMinimizeButton(value) => {
-                if let Ok(config) = cosmic::config::CosmicTk::config() {
-                    let _res = cosmic::config::COSMIC_TK
-                        .write()
-                        .unwrap()
-                        .set_show_minimize(&config, value);
-                }
-            }
             Message::ShowActiveWindowHint(value) => {
                 self.show_active_hint = value;
                 if let Err(err) = self.comp_config.set("active_hint", value) {
@@ -269,10 +251,12 @@ pub fn window_management() -> Section<crate::pages::Message> {
         })
 }
 
+// WMDE: no minimize / maximize toggles. A window's title bar variant alone decides its
+// buttons. The CosmicTk show_minimize / show_maximize keys stay at their default `true`,
+// which settings-daemon mirrors into GNOME's button layout - all three buttons for GTK
+// apps too, as on the normal title bar.
 pub fn window_controls() -> Section<crate::pages::Message> {
     crate::slab!(descriptions {
-        maximize = fl!("window-controls", "maximize");
-        minimize = fl!("window-controls", "minimize");
         active_window_hint = fl!("window-controls", "active-window-hint");
     });
 
@@ -287,14 +271,6 @@ pub fn window_controls() -> Section<crate::pages::Message> {
                 .add(
                     settings::item::builder(&descriptions[active_window_hint])
                         .toggler(page.show_active_hint, Message::ShowActiveWindowHint),
-                )
-                .add(
-                    settings::item::builder(&descriptions[maximize])
-                        .toggler(cosmic::config::show_maximize(), Message::ShowMaximizeButton),
-                )
-                .add(
-                    settings::item::builder(&descriptions[minimize])
-                        .toggler(cosmic::config::show_minimize(), Message::ShowMinimizeButton),
                 )
                 .apply(Element::from)
                 .map(crate::pages::Message::WindowManagement)

@@ -521,8 +521,6 @@ super-key = Super key action
 edge-gravity = Floating windows gravitate to nearby edges
 
 window-controls = Window controls
-    .maximize = Show maximize button
-    .minimize = Show minimize button
     .active-window-hint = Show active window hint
 
 focus-navigation = Focus navigation

@@ -174,8 +174,6 @@ super-key = Клавіша Super
     .applications = Відкриває меню застосунків
     .none = Нічого
 window-controls = Керування вікнами
-    .minimize = Показувати кнопку згортання
-    .maximize = Показувати кнопку розгортання
     .active-window-hint = Підсвічувати активне вікно
 
 ## Desktop: Workspaces
