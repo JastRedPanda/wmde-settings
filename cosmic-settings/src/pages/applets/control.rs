@@ -395,9 +395,13 @@ fn icon_grid<'a>(setting: &'a Setting, page: &'a Page) -> Element<'a, crate::pag
         })
         .collect();
 
+    // The list item gives the grid the same inset top and bottom, but the last row of
+    // buttons then sits on the card's edge; the extra space below keeps it off.
     widget::flex_row(buttons)
         .column_spacing(spacing)
         .row_spacing(spacing)
+        .apply(widget::container)
+        .padding([0, 0, spacing, 0])
         .into()
 }
 
