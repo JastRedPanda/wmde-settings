@@ -109,6 +109,7 @@ English rather than failing to build - a real cost of the file being data.
 | `Number(min:, max:)` | any integer or float | `step` defaults to 1, `decimals` to 0; add `suffix` for a unit; `optional: true` for `Option<T>` |
 | `Slider(min:, max:)` | any number | add `min_label` and `max_label` |
 | `Text` | `String` | `placeholder`, `max_len` |
+| `Icon(dir:)` | `String` (a path) | offers every picture in `dir` under the XDG data directories, plus any file through the file chooser; `extensions` defaults to `["svg", "png"]` |
 
 Plus three rows that hold no value:
 
