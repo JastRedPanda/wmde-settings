@@ -395,13 +395,14 @@ fn icon_grid<'a>(setting: &'a Setting, page: &'a Page) -> Element<'a, crate::pag
         })
         .collect();
 
-    // The list item gives the grid the same inset top and bottom, but the last row of
-    // buttons then sits on the card's edge; the extra space below keeps it off.
+    // The list item's own inset is only a few pixels, made for a line of text; a block of
+    // buttons needs the gap between its rows above and below it as well, or it sits
+    // tight against the divider and the card's edge.
     widget::flex_row(buttons)
         .column_spacing(spacing)
         .row_spacing(spacing)
         .apply(widget::container)
-        .padding([0, 0, spacing, 0])
+        .padding([spacing, 0])
         .into()
 }
 
