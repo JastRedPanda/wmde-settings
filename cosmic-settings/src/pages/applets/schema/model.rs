@@ -88,6 +88,7 @@ pub enum Control {
     Number(Number),
     Slider(Slider),
     Text(TextField),
+    Icon(IconPick),
 }
 
 /// A number entered with a spin button.
@@ -121,6 +122,19 @@ pub struct Slider {
 pub struct TextField {
     pub placeholder: Option<String>,
     pub max_len: Option<usize>,
+}
+
+/// A picture file chosen from a set the applet ships, or any file of the right type.
+///
+/// The key holds the absolute path as a RON string. The set is every file with one of
+/// `extensions` in `dir` under each XDG data directory, user-local first, so a package
+/// and a user can both add to it.
+#[derive(Clone)]
+pub struct IconPick {
+    /// Relative to the XDG data directories: `wmde/fun.wmde.start-menu/applet-buttons`.
+    pub dir: String,
+    /// Without the dot, lower case: `svg`, `png`.
+    pub extensions: Vec<String>,
 }
 
 #[derive(Clone)]
@@ -237,6 +251,15 @@ pub mod raw {
             #[serde(default)]
             max_len: Option<usize>,
         },
+        Icon {
+            dir: String,
+            #[serde(default = "svg_png")]
+            extensions: Vec<String>,
+        },
+    }
+
+    fn svg_png() -> Vec<String> {
+        vec!["svg".to_owned(), "png".to_owned()]
     }
 
     /// A step of zero would freeze the control, so the default is one rather than

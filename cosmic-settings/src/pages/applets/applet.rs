@@ -20,6 +20,8 @@ use cosmic_settings_page::{self as page, Section, section};
 use slab::Slab;
 use slotmap::Key;
 use slotmap::SlotMap;
+use std::collections::HashMap;
+use std::path::PathBuf;
 
 pub struct Page {
     entity: page::Entity,
@@ -35,6 +37,10 @@ pub struct Page {
     /// so that an abandoned edit leaves the stored value alone.
     editing: Option<(usize, String)>,
     store: Option<Store>,
+    /// The pictures an `Icon` setting offers, per slot. Gathered on entering the page
+    /// rather than in `view`, which runs on every event and would list directories each
+    /// time.
+    icons: HashMap<usize, Vec<PathBuf>>,
 }
 
 impl Page {
@@ -60,6 +66,7 @@ impl Page {
             values,
             editing: None,
             store: None,
+            icons: HashMap::new(),
         }
     }
 
@@ -78,6 +85,11 @@ impl Page {
 
     pub fn entity(&self) -> page::Entity {
         self.entity
+    }
+
+    /// The pictures an `Icon` setting offers, as last gathered.
+    pub fn icons(&self, slot: usize) -> &[PathBuf] {
+        self.icons.get(&slot).map_or(&[], Vec::as_slice)
     }
 
     pub fn update(&mut self, message: Message) -> Task<crate::app::Message> {
@@ -138,6 +150,51 @@ impl Page {
             Message::TextCommit { slot, .. } => self.commit_text(slot),
 
             Message::Reset { .. } => self.reset(),
+
+            Message::IconPick { slot, path, .. } => {
+                self.write(slot, store::format_text(&path));
+            }
+
+            #[cfg(feature = "xdg-portal")]
+            Message::IconFile { page, slot } => {
+                let Some(Control::Icon(pick)) = self.setting(slot).map(|s| &s.control) else {
+                    return Task::none();
+                };
+                let description = fl!("applet-settings-icon-files");
+                let filter = pick.extensions.iter().fold(
+                    cosmic::dialog::file_chooser::FileFilter::new(&description),
+                    |filter, ext| filter.glob(&format!("*.{ext}")),
+                );
+
+                return cosmic::task::future(async move {
+                    let chosen = cosmic::dialog::file_chooser::open::Dialog::new()
+                        .modal(true)
+                        .filter(filter)
+                        .open_file()
+                        .await;
+
+                    match chosen.map(|response| response.url().to_file_path()) {
+                        Ok(Ok(path)) => Message::IconPick {
+                            page,
+                            slot,
+                            path: path.to_string_lossy().into_owned(),
+                        }
+                        .into(),
+                        Ok(Err(())) => {
+                            tracing::warn!("chosen icon is not a local file");
+                            crate::app::Message::None
+                        }
+                        // Cancelling the dialog lands here too; there is nothing to do.
+                        Err(why) => {
+                            tracing::debug!(?why, "no icon file chosen");
+                            crate::app::Message::None
+                        }
+                    }
+                });
+            }
+
+            #[cfg(not(feature = "xdg-portal"))]
+            Message::IconFile { .. } => {}
 
             Message::Launch { exec, .. } => {
                 // Detached on purpose: the program the applet ships owns its own window,
@@ -316,7 +373,65 @@ impl Page {
         }
 
         self.values = values;
+
+        self.icons = schema
+            .groups
+            .iter()
+            .flat_map(|group| &group.rows)
+            .filter_map(|row| match row {
+                Row::Setting(Setting {
+                    slot,
+                    control: Control::Icon(pick),
+                    ..
+                }) => Some((*slot, icon_files(&pick.dir, &pick.extensions))),
+                _ => None,
+            })
+            .collect();
     }
+}
+
+/// Every file with one of `extensions` in `dir` under the XDG data directories, the
+/// user's own first, sorted by name within each and without repeats.
+fn icon_files(dir: &str, extensions: &[String]) -> Vec<PathBuf> {
+    let mut roots: Vec<PathBuf> = Vec::new();
+    match std::env::var_os("XDG_DATA_HOME") {
+        Some(home) if !home.is_empty() => roots.push(PathBuf::from(home)),
+        _ => {
+            if let Some(home) = std::env::var_os("HOME") {
+                roots.push(PathBuf::from(home).join(".local/share"));
+            }
+        }
+    }
+    match std::env::var("XDG_DATA_DIRS") {
+        Ok(dirs) if !dirs.is_empty() => {
+            roots.extend(dirs.split(':').filter(|d| !d.is_empty()).map(PathBuf::from));
+        }
+        _ => roots.extend(["/usr/local/share", "/usr/share"].map(PathBuf::from)),
+    }
+
+    let mut found: Vec<PathBuf> = Vec::new();
+    for root in roots {
+        let Ok(entries) = std::fs::read_dir(root.join(dir)) else {
+            continue;
+        };
+        let mut files: Vec<PathBuf> = entries
+            .flatten()
+            .map(|entry| entry.path())
+            .filter(|path| {
+                path.extension()
+                    .and_then(|ext| ext.to_str())
+                    .is_some_and(|ext| extensions.iter().any(|e| e.eq_ignore_ascii_case(ext)))
+            })
+            .map(|path| path.canonicalize().unwrap_or(path))
+            .collect();
+        files.sort();
+        for file in files {
+            if !found.contains(&file) {
+                found.push(file);
+            }
+        }
+    }
+    found
 }
 
 impl page::Page<crate::pages::Message> for Page {

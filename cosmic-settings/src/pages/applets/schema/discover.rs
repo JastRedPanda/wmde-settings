@@ -10,7 +10,8 @@
 
 use super::l10n;
 use super::model::{
-    ChoiceItem, Control, Group, Number, Row, SUPPORTED, Schema, Setting, Slider, TextField, raw,
+    ChoiceItem, Control, Group, IconPick, Number, Row, SUPPORTED, Schema, Setting, Slider,
+    TextField, raw,
 };
 use freedesktop_desktop_entry::get_languages_from_env;
 use ron::value::RawValue;
@@ -285,6 +286,22 @@ fn convert_control(control: raw::Control, languages: &[String], key: &str) -> Op
             placeholder: l10n::resolve_opt(placeholder.as_ref(), languages),
             max_len,
         })),
+
+        raw::Control::Icon { dir, extensions } => {
+            let dir = dir.trim_matches('/').to_owned();
+            let extensions: Vec<String> = extensions
+                .into_iter()
+                .map(|ext| ext.trim_start_matches('.').to_lowercase())
+                .filter(|ext| !ext.is_empty())
+                .collect();
+            // An empty dir would search the data directories themselves, and no
+            // extension would offer nothing to pick.
+            if dir.is_empty() || extensions.is_empty() {
+                warn!(key, "dropping icon picker: empty dir or no extensions");
+                return None;
+            }
+            Some(Control::Icon(IconPick { dir, extensions }))
+        }
     }
 }
 
@@ -393,6 +410,55 @@ mod tests {
         assert_eq!(choice.slot, 1);
 
         assert!(matches!(&rows[2], Row::Note(text) if text == "Керується службою"));
+    }
+
+    #[test]
+    fn icon_picker_normalises_and_rejects_empty() {
+        let schema = parse(
+            r#"
+(
+    schema: 1,
+    config: (id: "fun.wmde.start-menu", version: 1),
+    groups: [
+        (
+            title: { "": "Button" },
+            rows: [
+                Setting(
+                    key: "button_icon",
+                    label: { "": "Icon" },
+                    control: Icon(dir: "/wmde/x/buttons/", extensions: [".SVG", "png", ""]),
+                    default: "\"/usr/share/wmde/x/buttons/default.svg\"",
+                ),
+                Setting(key: "no_dir", label: { "": "Broken" }, control: Icon(dir: "")),
+                Setting(key: "implied", label: { "": "Implied" }, control: Icon(dir: "a")),
+            ],
+        ),
+    ],
+)
+"#,
+            &languages(),
+        )
+        .expect("schema parses");
+
+        let rows = &schema.groups[0].rows;
+        assert_eq!(rows.len(), 2, "the icon picker without a dir is dropped alone");
+
+        let Row::Setting(icon) = &rows[0] else {
+            panic!("expected a setting");
+        };
+        let Control::Icon(pick) = &icon.control else {
+            panic!("expected an icon picker");
+        };
+        assert_eq!(pick.dir, "wmde/x/buttons");
+        assert_eq!(pick.extensions, ["svg", "png"]);
+
+        let Row::Setting(implied) = &rows[1] else {
+            panic!("expected a setting");
+        };
+        let Control::Icon(pick) = &implied.control else {
+            panic!("expected an icon picker");
+        };
+        assert_eq!(pick.extensions, ["svg", "png"], "svg and png unless told otherwise");
     }
 
     #[test]

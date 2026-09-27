@@ -68,6 +68,9 @@ pub fn group<'a>(
                 Control::Number(number) => section.add(number_row(setting, number, page)),
                 Control::Slider(config) => section.add(slider_row(setting, config, page)),
                 Control::Text(field) => section.add(text_row(setting, field, page)),
+                Control::Icon(_) => section
+                    .add(icon_row(setting, page))
+                    .add(icon_grid(setting, page)),
             },
         };
     }
@@ -324,6 +327,75 @@ fn text_row<'a>(
     .width(Length::Fixed(200.0));
 
     labelled(setting).control(control)
+}
+
+/// The label, the picture in force, and the way out to any file of the right type.
+fn icon_row<'a>(
+    setting: &'a Setting,
+    page: &'a Page,
+) -> impl IntoListItem<'a, crate::pages::Message> + 'a {
+    let (slot, entity) = (setting.slot, page.entity());
+
+    let preview: Element<'_, crate::pages::Message> =
+        match current(setting, page).and_then(store::as_text) {
+            Some(path) if !path.is_empty() => {
+                widget::icon(widget::icon::from_path(path.into())).size(32).into()
+            }
+            _ => widget::space::horizontal().width(Length::Fixed(32.0)).into(),
+        };
+
+    let mut control = row::with_capacity(2)
+        .spacing(theme::spacing().space_s)
+        .align_y(Alignment::Center)
+        .push(preview);
+
+    // Without the portal there is no file chooser to open, and the offered set is all
+    // there is.
+    #[cfg(feature = "xdg-portal")]
+    {
+        control = control.push(
+            widget::button::standard(fl!("applet-settings-icon-file"))
+                .on_press(Message::IconFile { page: entity, slot }.into()),
+        );
+    }
+    #[cfg(not(feature = "xdg-portal"))]
+    let _ = (slot, entity);
+
+    labelled(setting).control(control)
+}
+
+/// Every picture the applet offers, the one in force highlighted.
+fn icon_grid<'a>(setting: &'a Setting, page: &'a Page) -> Element<'a, crate::pages::Message> {
+    let (slot, entity) = (setting.slot, page.entity());
+    let in_force = current(setting, page).and_then(store::as_text);
+    let spacing = theme::spacing().space_xs;
+
+    let buttons: Vec<Element<'_, crate::pages::Message>> = page
+        .icons(slot)
+        .iter()
+        .map(|path| {
+            let path_text = path.to_string_lossy().into_owned();
+            let selected = in_force.as_deref() == Some(path_text.as_str());
+            widget::button::custom(widget::icon(widget::icon::from_path(path.clone())).size(32))
+                .padding(8)
+                .class(theme::Button::Icon)
+                .selected(selected)
+                .on_press(
+                    Message::IconPick {
+                        page: entity,
+                        slot,
+                        path: path_text,
+                    }
+                    .into(),
+                )
+                .into()
+        })
+        .collect();
+
+    widget::flex_row(buttons)
+        .column_spacing(spacing)
+        .row_spacing(spacing)
+        .into()
 }
 
 /// The number shown on the spin button, with the unit the schema declared.

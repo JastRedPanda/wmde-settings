@@ -1173,6 +1173,8 @@ applet-settings-none = This applet has no settings.
 applet-settings-too-new = These settings need a newer version of Settings.
 applet-settings-reset = Reset to defaults
 applet-settings-open = Open
+applet-settings-icon-file = Other file...
+applet-settings-icon-files = Pictures
 
 components = Components
 

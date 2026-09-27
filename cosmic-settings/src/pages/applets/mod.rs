@@ -86,6 +86,17 @@ pub enum Message {
         page: page::Entity,
         exec: String,
     },
+    /// A picture chosen for an `Icon` setting, by absolute path.
+    IconPick {
+        page: page::Entity,
+        slot: usize,
+        path: String,
+    },
+    /// Ask for a picture file outside the offered set.
+    IconFile {
+        page: page::Entity,
+        slot: usize,
+    },
     /// A dropdown's popup surface. Not tied to a page - it goes straight to the shell.
     Surface(surface::Action<crate::app::Message>),
 }
@@ -103,7 +114,9 @@ impl Message {
             | Self::TextEditing { page, .. }
             | Self::TextCommit { page, .. }
             | Self::Reset { page }
-            | Self::Launch { page, .. } => Some(*page),
+            | Self::Launch { page, .. }
+            | Self::IconPick { page, .. }
+            | Self::IconFile { page, .. } => Some(*page),
             Self::Surface(_) => None,
         }
     }
