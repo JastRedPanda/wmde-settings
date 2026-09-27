@@ -378,7 +378,10 @@ fn icon_grid<'a>(setting: &'a Setting, page: &'a Page) -> Element<'a, crate::pag
             let selected = in_force.as_deref() == Some(path_text.as_str());
             widget::button::custom(widget::icon(widget::icon::from_path(path.clone())).size(32))
                 .padding(8)
-                .class(theme::Button::Icon)
+                // IconVertical, not Icon: Icon shows "selected" only by recolouring a
+                // symbolic glyph, which a full-colour logo does not have. IconVertical lays
+                // the selection fill over the button and leaves the picture's colours alone.
+                .class(theme::Button::IconVertical)
                 .selected(selected)
                 .on_press(
                     Message::IconPick {
