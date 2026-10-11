@@ -500,6 +500,12 @@ touchpad = Сенсорна панель
     .acceleration = Увімкнути прискорення сенсорної панелі
     .speed = Швидкість сенсорної панелі
 
+drawing-tablet = Графічний планшет
+    .no-devices-detected = Графічних планшетів і пер не виявлено
+    .map-to-display = Привʼязати до дисплея
+    .not-set = Не вибрано
+    .enabled = Увімкнено
+
 ## Input: Gestures
 
 gestures = Жести
@@ -864,6 +870,8 @@ workspaces-overview = Режим огляду робочих просторів
     .launcher = Відкрити запускач
     .applications = Відкрити застосунки
 xdg-entry-touchpad = Сенсорна панель
+xdg-entry-drawing-tablet = Графічний планшет
+xdg-entry-drawing-tablet-comment = Привʼязка пера до дисплея
 xdg-entry-wired = Дротове
 xdg-entry-startup-apps-comment = Налаштування застосунків, які запускаються при вході у систему
 xdg-entry-region-language = Регіон та мова
@@ -933,6 +941,7 @@ xdg-entry-panel-keywords = WMDE;Панель;Віджет
 xdg-entry-desktop-keywords = WMDE;Стільниця;
 xdg-entry-x11-applications-keywords = WMDE;X11;Застосунок;Програма;Гра;Сумісність;
 xdg-entry-touchpad-keywords = WMDE;Сенсорна;Панель;Тачпад;Жести;
+xdg-entry-drawing-tablet-keywords = WMDE;Графічний;Планшет;Перо;Стилус;Чутливість;
 xdg-entry-system-keywords = WMDE;Про;Систему;Система;Інформація;Облікові;Записи;Обліковка;Мікропрограма;Прошивка;
 xdg-entry-wireless-keywords = WMDE;WiFi;Wi-Fi;Мережа;З'єднання;Підключення;
 xdg-entry-about-keywords = WMDE;Про;Систему
