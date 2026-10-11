@@ -129,7 +129,10 @@ impl Default for Page {
         )
         .unwrap();
         let saved_input_devices: HashMap<String, InputConfig> = tablet_config
-            .get("saved_input_devices")
+            // WMDE: the compositor keeps per-device settings under `input_devices`, the key this
+            // page writes back whole; upstream read `saved_input_devices`, which nothing writes, so
+            // the first toggle replaced every other device's entry.
+            .get("input_devices")
             .unwrap_or_else(|_| HashMap::new());
 
         let connected_tablets = get_connected_tablets();
