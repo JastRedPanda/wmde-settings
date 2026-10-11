@@ -388,6 +388,8 @@ nav-shortcuts = Навігація
     .last-workspace = Фокус на останній робочий простір
     .prev-workspace = Фокус на попередній робочий простір
     .next-workspace = Фокус на наступний робочий простір
+    .next-window = Фокус на наступне вікно
+    .prev-window = Фокус на попереднє вікно
     .focus =
         Фокус на вікно { $direction ->
            *[down] вниз
@@ -537,9 +539,6 @@ time-format = Формат дати й часу
     .saturday = Субота
     .sunday = Неділя
     .monday = Понеділок
-
-date-time-applet-settings-title = Віджет дати й часу
-date-time-applet-settings-label = Налаштування віджета дати й часу
 
 time-region = Регіон та мова
 
