@@ -521,8 +521,8 @@ time-date = Дата та час
 time-zone = Часовий пояс
     .auto = Автоматичне визначення часового поясу
     .auto-info = Необхідні служби визначення місцезнаходження та доступ до Інтернету
-time-format = Формат дати та часу
-    .twenty-four = 24-годинний формат часу
+time-format = Формат дати й часу
+    .twenty-four = 24-годинний формат
     .show-seconds = Секунди
     .show-weekday = День тижня
     .first = Перший день тижня
@@ -965,6 +965,14 @@ bluetooth-display-passkey = Злучення Bluetooth
     .description = Введіть код для створення пари на { $device }, далі натисніть Enter
 rename = Перейменувати
 bluetooth-rename-device = Перейменувати пристрій
+mobility = Мобільність
+on-screen-keyboard = Екранна клавіатура
+    .always-show = Завжди показувати екранну клавіатуру
+    .icon-on-panel = Значок на панелі
+    .show-on-gamepad-shortcut = Показувати екранну клавіатуру за допомогою ґеймпада, одночасно натиснувши кнопки Start і Select/Back
+    .show-on-text-input = Показувати екранну клавіатуру під час вибору текстового поля
+date-time-applet-settings-title = Віджет дати й часу
+date-time-applet-settings-label = Налаштування віджета дати й часу
 
 ## WMDE: підсторінка «Обладнання» в категорії «Система і обліковки»
 hardware = Обладнання
