@@ -166,6 +166,7 @@ pub(crate) fn style<
         appearance = fl!("panel-style", "appearance");
         background_opacity = fl!("panel-style", "background-opacity");
         shadow = fl!("panel-style", "shadow");
+        keep_style = fl!("panel-style", "keep-style-on-maximize");
         size = fl!("panel-style", "size");
     });
 
@@ -266,6 +267,12 @@ pub(crate) fn style<
                     settings::item::builder(&descriptions[shadow])
                         .toggler(panel_config.shadow, Message::Shadow),
                 )
+                // WMDE: off, a maximized window turns the panel into an opaque edge bar
+                // (`CosmicPanelConfig::maximize`).
+                .add(settings::item::builder(&descriptions[keep_style]).toggler(
+                    panel_config.keep_style_on_maximize,
+                    Message::KeepStyleOnMaximize,
+                ))
                 .apply(Element::from)
                 .map(msg_map)
         })
@@ -423,6 +430,7 @@ pub enum Message {
     Look(usize),
     ExtendToEdge(bool),
     Shadow(bool),
+    KeepStyleOnMaximize(bool),
     OpacityRequest(f32),
     OpacityApply,
     OutputAdded(String, WlOutput),
@@ -619,6 +627,9 @@ impl PageInner {
             }
             Message::Shadow(enabled) => {
                 _ = panel_config.set_shadow(helper, enabled);
+            }
+            Message::KeepStyleOnMaximize(enabled) => {
+                _ = panel_config.set_keep_style_on_maximize(helper, enabled);
             }
             Message::ExtendToEdge(enabled) => {
                 _ = panel_config.set_expand_to_edges(helper, enabled);

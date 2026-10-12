@@ -151,6 +151,7 @@ panel-style = Стиль
     .size = Товщина
     .background-opacity = Непрозорість тла
     .shadow = Відкидати тінь
+    .keep-style-on-maximize = Зберігати вигляд, коли вікно розгорнуто
 panel-applets = Налаштування
     .desc = Конфігурація віджетів
 panel-missing = Конфігурацію панелі не знайдено

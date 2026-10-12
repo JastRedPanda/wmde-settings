@@ -491,6 +491,7 @@ panel-style = Style
     .size = Thickness
     .background-opacity = Background opacity
     .shadow = Drop shadow
+    .keep-style-on-maximize = Keep the style while a window is maximized
 
 panel-applets = Configuration
     .desc = Configure panel applets
