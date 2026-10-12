@@ -490,6 +490,7 @@ panel-style = Style
     .appearance = Appearance
     .size = Thickness
     .background-opacity = Background opacity
+    .shadow = Drop shadow
 
 panel-applets = Configuration
     .desc = Configure panel applets

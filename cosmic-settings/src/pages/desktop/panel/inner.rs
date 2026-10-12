@@ -165,6 +165,7 @@ pub(crate) fn style<
         look = fl!("panel-look");
         appearance = fl!("panel-style", "appearance");
         background_opacity = fl!("panel-style", "background-opacity");
+        shadow = fl!("panel-style", "shadow");
         size = fl!("panel-style", "size");
     });
 
@@ -259,6 +260,11 @@ pub(crate) fn style<
                                 .max_width(250),
                             )
                     }),
+                )
+                // WMDE: the compositor draws it, faded by the opacity above.
+                .add(
+                    settings::item::builder(&descriptions[shadow])
+                        .toggler(panel_config.shadow, Message::Shadow),
                 )
                 .apply(Element::from)
                 .map(msg_map)
@@ -416,6 +422,7 @@ pub enum Message {
     Appearance(usize),
     Look(usize),
     ExtendToEdge(bool),
+    Shadow(bool),
     OpacityRequest(f32),
     OpacityApply,
     OutputAdded(String, WlOutput),
@@ -609,6 +616,9 @@ impl PageInner {
                         0
                     },
                 );
+            }
+            Message::Shadow(enabled) => {
+                _ = panel_config.set_shadow(helper, enabled);
             }
             Message::ExtendToEdge(enabled) => {
                 _ = panel_config.set_expand_to_edges(helper, enabled);
